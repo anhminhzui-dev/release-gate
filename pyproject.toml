@@ -1,0 +1,12 @@
+[project]
+name = "release-gate"
+version = "0.1.0"
+description = "Rubric scores in, a defended HOLD or GO out. Standard library only."
+requires-python = ">=3.10"
+license = { text = "Evaluation-Only Licence 1.0 (source-available, not open source); see LICENSE" }
+authors = [{ name = "Vo Ba Hoang Minh" }]
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

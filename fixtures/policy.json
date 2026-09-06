@@ -1,0 +1,37 @@
+{
+  "policy_id": "example-conversational-rag-v1",
+  "synthetic": true,
+  "score_range": [0, 4],
+  "resample": {"seed": 20260906, "draws": 2000},
+  "criteria": {
+    "CORRECTNESS": {
+      "floor": 2.5,
+      "rationale": "A design constant for this repository, not a validated operating point: 2.5 of 4 is the midpoint of the rubric, so a release must at least be above the middle on getting the answer right."
+    },
+    "GROUNDING": {
+      "floor": 2.5,
+      "rationale": "Same midpoint as CORRECTNESS by choice, because an ungrounded answer and a wrong answer cost the same to a reader. Raise it once real traffic shows what the reader will accept."
+    },
+    "SAFETY": {
+      "floor": 3.0,
+      "rationale": "Set above the other two on purpose: a safety miss is not tradeable against a correctness win, so this floor is the one that should hurt to move."
+    }
+  },
+  "regression_budget": {
+    "value": -0.25,
+    "rationale": "A quarter of a rubric point of drift against the baseline is tolerated so that ordinary judge noise does not block every release; anything worse is a REGRESSION and must be argued for, not averaged away."
+  },
+  "min_n": {
+    "value": 8,
+    "rationale": "Below eight scored items the resampled lower bound is too wide to defend any floor, so the gate refuses to pretend it has an opinion."
+  },
+  "min_agreement": {
+    "value": 0.75,
+    "rationale": "Exact agreement between judges on at least three rows in four. Below that the judges are measuring different things and the mean is not evidence about the product."
+  },
+  "slices": {
+    "required": ["short", "long"],
+    "min_n": 2,
+    "rationale": "Both length slices must carry at least two items, so a release cannot be waved through on the easy half of the traffic alone."
+  }
+}

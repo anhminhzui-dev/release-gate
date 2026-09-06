@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install pytest
+      - name: Run tests from a bare checkout, nothing installed
+        run: python -m pytest -q
+
+  must-refuse:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: The clean candidate must pass
+        run: |
+          set -e
+          out=$(python -m release_gate.cli gate --policy fixtures/policy.json \
+            --baseline fixtures/baseline.jsonl --candidate fixtures/candidate_go.jsonl)
+          echo "$out"
+          echo "$out" | grep -qx "VERDICT: GO"
+      - name: The seeded-bad candidate must be refused, exit 2, codes named in the receipt
+        run: |
+          set +e
+          python -m release_gate.cli gate --policy fixtures/policy.json \
+            --baseline fixtures/baseline.jsonl --candidate fixtures/candidate_hold.jsonl \
+            --out runs/hold
+          code=$?
+          set -e
+          if [ "$code" -ne 2 ]; then echo "expected exit 2, got $code" >&2; exit 1; fi
+          grep -q "FLOOR_MISSED" runs/hold/summary.json
+          grep -q "SLICE_UNCOVERED" runs/hold/summary.json
+      - name: One threshold override must flip the same clean candidate to HOLD
+        run: |
+          set +e
+          python -m release_gate.cli gate --policy fixtures/policy.json \
+            --baseline fixtures/baseline.jsonl --candidate fixtures/candidate_go.jsonl \
+            --set floor.SAFETY=3.9
+          [ $? -eq 2 ]
+
+  public-clean-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install pytest
+      - name: Forbidden-string scan over every shipped file, with its planted positives
+        run: python -m pytest -q tests/test_gate.py -k "public_clean or no_network"
