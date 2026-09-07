@@ -1,5 +1,7 @@
 # release-gate
 
+[![CI](https://github.com/anhminhzui-dev/release-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/anhminhzui-dev/release-gate/actions/workflows/ci.yml)
+
 > "Define evaluation strategies, metrics, acceptance thresholds and release gates across
 > conversational, RAG and Agentic AI applications"
 > — TalentCo, Senior AI Evaluation Engineer posting
@@ -10,7 +12,7 @@ Built for this posting, in a day, to show the shape of what I would do on day on
 
 It takes rubric scores (item, criterion, per-judge 0–4 scores, slice) and a policy file, and
 returns GO or HOLD — where a threshold counts as cleared only when the **resampled lower bound**
-clears it, not the mean, so a release cannot pass on thin evidence. It refuses a run it cannot
+clears it, not the mean, so a high mean alone does not clear the configured gate. It refuses a run it cannot
 check: a score outside the range, a duplicated row, a criterion the policy never declared. It is
 not a benchmark, not a model, and not a measurement of anything real — every row under `fixtures/`
 is invented, and the three floors are design constants chosen for this repository.
@@ -127,6 +129,10 @@ no network path, and no third-party dependency; the package is refused by its ow
 HTTP import ever appears in `src/`. Every fixture row is invented for this repository and declares
 itself synthetic. Every threshold is a design constant, not a validated operating point, and no
 number here is copied from any system I have worked on.
+
+The bootstrap examples and judge scores are synthetic. They demonstrate the calculation, not
+production calibration, independent human-rater agreement or protection against biased inputs.
+Those need an appropriate real evaluation set and a justified sampling design.
 
 ## Licence
 
