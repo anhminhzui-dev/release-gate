@@ -1,23 +1,20 @@
 # release-gate
 
 [![CI](https://github.com/anhminhzui-dev/release-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/anhminhzui-dev/release-gate/actions/workflows/ci.yml)
+[![Licence](https://img.shields.io/badge/licence-evaluation--only-blue)](LICENSE)
 
-> "Define evaluation strategies, metrics, acceptance thresholds and release gates across
-> conversational, RAG and Agentic AI applications"
-> — TalentCo, Senior AI Evaluation Engineer posting
+**A high average should not silently override the release policy.**
 
-Built for this posting, in a day, to show the shape of what I would do on day one.
+A deterministic decision gate for rubric-score fixtures. It admits baseline and candidate rows, then checks criterion floors using a seeded resampled lower bound alongside regression, sample-size, judge-agreement and slice-coverage requirements.
 
-## To the TalentCo reviewer
+```text
+policy + baseline + candidate → input admission → per-criterion resampling
+                             → ordered gate reasons → GO / HOLD + receipt
+```
 
-It takes rubric scores (item, criterion, per-judge 0–4 scores, slice) and a policy file, and
-returns GO or HOLD — where a threshold counts as cleared only when the **resampled lower bound**
-clears it, not the mean, so a high mean alone does not clear the configured gate. It refuses a run it cannot
-check: a score outside the range, a duplicated row, a criterion the policy never declared. It is
-not a benchmark, not a model, and not a measurement of anything real — every row under `fixtures/`
-is invented, and the three floors are design constants chosen for this repository.
+The `explain` command identifies the nearest threshold change that flips the current verdict. Regression tests disable a guard to show the failure it prevents. Receipts retain counts, codes and hashes rather than individual judge scores.
 
-Two commands, sixty seconds, no install: see **Run it** below.
+The fixtures and thresholds are synthetic design choices. The resampled lower bound is a calculation, not evidence of calibrated confidence coverage, independent human agreement or production release safety. Commands below run locally without a model or network call.
 
 ## What it refuses
 
@@ -112,7 +109,7 @@ refuse and `test_falsifier_regression_check_disabled_lets_hold_pass`, which swit
 check off through an injection seam and watches a real defect walk through — a gate never shown to
 fail certifies nothing.
 
-## What I would do on day one at TalentCo
+## Integration path
 
 Read the last ten release decisions and ask which threshold each one turned on, and who could
 name the rationale without looking. Most gates fail not because the metric is wrong but because
@@ -122,17 +119,15 @@ its lower bound so a thin sample is visible as thin rather than rounded into a p
 first conversational and RAG suites and add the slice coverage check, because the number that
 sinks a release is usually the one nobody sliced.
 
-## What this is not
+## Scope and integration
 
-No accuracy figure is claimed here and none is computable from what ships here. There is no model,
-no network path, and no third-party dependency; the package is refused by its own test suite if an
-HTTP import ever appears in `src/`. Every fixture row is invented for this repository and declares
-itself synthetic. Every threshold is a design constant, not a validated operating point, and no
-number here is copied from any system I have worked on.
+Synthetic rubric rows demonstrate validation, resampling and release decisions. The bootstrap bounds reproduce the stated calculation; they are not measurements of independent human-rater agreement or production calibration.
 
-The bootstrap examples and judge scores are synthetic. They demonstrate the calculation, not
-production calibration, independent human-rater agreement or protection against biased inputs.
-Those need an appropriate real evaluation set and a justified sampling design.
+Thresholds and sampling assumptions must match the intended evaluation population. The package runs offline with the Python standard library and does not call a model or network service.
+
+## Project context
+
+Problem definition, architecture and acceptance review: **Minh Vo**, with AI-assisted implementation. This focused tool belongs to a broader body of data, assessment and training-systems work described in the [research overview](https://github.com/anhminhzui-dev#research-engineering-the-evidence-behind-ai-judgement). Its runnable scope is the mechanism documented here.
 
 ## Licence
 
