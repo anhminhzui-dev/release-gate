@@ -127,7 +127,7 @@ Thresholds and sampling assumptions must match the intended evaluation populatio
 
 ## Project context
 
-Problem definition, architecture and acceptance review: **Minh Vo**, with AI-assisted implementation. This focused tool belongs to a broader body of data, assessment and training-systems work described in the [research overview](https://github.com/anhminhzui-dev#research-engineering-the-evidence-behind-ai-judgement). Its runnable scope is the mechanism documented here.
+Problem definition, architecture and acceptance review: **Minh Vo**, with AI-assisted implementation. This focused tool belongs to a broader body of data, assessment and training-systems work described in the [research overview](https://github.com/anhminhzui-dev/anhminhzui-dev#research-constructing-evidence-grounded-language-judgments). Its runnable scope is the mechanism documented here.
 
 ## Licence
 
